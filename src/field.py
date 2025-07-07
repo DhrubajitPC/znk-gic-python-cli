@@ -26,7 +26,7 @@ class Field:
 
     def is_car_at_position(self, position: Position) -> (bool, Car):
         for car in self.cars:
-            if car.get_position() == position:
+            if car.position.x == position.x and car.position.y == position.y:
                 return True, car
         return False, None
 

@@ -7,7 +7,7 @@ from enum import Enum
 
 
 init_options = ["Add a car to field", "Run simulation"]
-end_options = ["Start over", "exit"]
+end_options = ["Start over", "Exit"]
 
 class States(Enum):
     START = "start"
@@ -30,6 +30,12 @@ class Cli:
             elif self.state == States.INPUT:
                 self._print_status()
                 self._show_menu(init_options)
+            elif self.state == States.RUN:
+                # self._simulate()
+                print('running simulation...')
+                self.state = States.END
+            elif self.state == States.END:
+                self._print_simulation_result()
 
     def _print_status(self):
         print("Your current list of cars are: \n")
@@ -39,9 +45,9 @@ class Cli:
 
     def _create_field(self):
         prompt = "Please enter the width and height of the simulation field in x y format:\n"
-        print(prompt)
         dimensions = None
         while not dimensions:
+            print(prompt)
             try:
                 dimensions = input().strip().split()
                 if len(dimensions) != 2:
@@ -52,24 +58,36 @@ class Cli:
                 print(f"You have created a field of {width} x {height}.\n")
 
             except ValueError as e:
-                print(f"Invalid input. \n{prompt}")
+                print(f"Invalid input. \n{e}")
                 dimensions = None
+
+    def _print_simulation_result(self):
+        self._print_status()
+        print("\nAfter simulation, the result is:\n")
+        for car in self.field.cars:
+            print(f"- {car.name}, ({car.get_position().x}, {car.get_position().y}) {car.direction}\n")
+
+        self._show_menu(end_options)
+
 
 
     def _show_menu(self, options: List[str]):
-        print(f"""
-            Please choose from the following options:
-            [1] {options[0]}
-            [2] {options[1]}
-           """)
+        print(f"Please choose from the following options:\n[1] {options[0]}\n[2] {options[1]}\n")
+        print("state")
+        print(self.state)
         try:
             choice = int(input().strip())
-            if choice == 1:
+            if choice == 1 and self.state == States.END:
+                self.state = States.START
+                self.field = None
+            elif choice == 1:
                 self._add_car()
                 self.state = States.INPUT
+            elif choice == 2 and self.state == States.END:
+                print("Thank you for running the simulation. Goodbye!")
+                sys.exit(0)
             elif choice == 2:
-                # self._run_simulation()
-                print("Running simulation...")
+                self.state = States.RUN
             else:
                 print("Invalid choice. Please select 1 or 2.")
                 self._show_menu(options)
@@ -119,6 +137,9 @@ class Cli:
                 car_direction = Direction(direction)
                 if not self.field.is_valid_position(car_position):
                     raise ValueError("Car position is out of bounds.")
+                is_existing_car, _ = self.field.is_car_at_position(car_position)
+                if is_existing_car:
+                    raise ValueError("A car already exists at this position.")
             except ValueError as e:
                 print(f"Invalid input: {e}. Please try again.")
                 car_position = None
@@ -127,11 +148,13 @@ class Cli:
 
     def _get_car_commands(self, car_name: str) -> str:
         valid_commands = ['F', 'L', 'R']
-        while True:
+        command = None
+        while not command:
             print(f"Please enter the commands for car {car_name}:")
             command = input().strip().upper()
             for cmd in command:
                 if cmd not in valid_commands:
                     print(f"Invalid command '{cmd}'. Valid commands are: {', '.join(valid_commands)}")
+                    command = None
                     continue
-            return command
+        return command
