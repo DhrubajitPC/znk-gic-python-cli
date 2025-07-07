@@ -72,3 +72,8 @@ class Car:
 
     def set_collision(self):
         self.is_collided = True
+
+    def __str__(self) -> str:
+        """String representation of the car with commands"""
+        commands_str = "".join(self.commands)
+        return f"{self.name}, ({self.x},{self.y}) {self.direction.value}, {commands_str}"
