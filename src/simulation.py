@@ -10,12 +10,12 @@ class Simulation:
         if not self.field.cars:
             return
         number_of_steps = max(len(car.commands) for car in self.field.cars)
-        for step in range(number_of_steps):
+        for step in range(1, number_of_steps + 1):
             for car in self.field.cars:
                 if car.is_collided:
                     continue
-                if step < len(car.commands):
-                    command = car.commands[step]
+                if step - 1 < len(car.commands):
+                    command = car.commands[step-1]
                     if command == 'F':
                         next_position = self._get_car_next_position(car)
                         is_car_present, present_cars = self.field.is_car_at_position(next_position)
