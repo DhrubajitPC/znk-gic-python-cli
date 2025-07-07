@@ -1,4 +1,5 @@
 from src.car import Car,Position, Direction
+from pytest import raises
 
 class TestCar:
     def setup_method(self):
@@ -69,5 +70,18 @@ class TestCar:
 
     def test_car_set_collision(self):
         """Test car collision state"""
-        self.car.set_collision_true()
+        self.car.set_collision_true(1)
         assert self.car.is_collided
+        assert self.car.collision_step == 1
+
+    def test_invalid_command(self):
+        """Test car raises error on invalid command"""
+        try:
+            self.car.move('X')
+        except ValueError as e:
+            assert "Invalid command" in str(e)
+
+    def test_empty_name(self):
+        """Test car raises error on empty name"""
+        with raises(ValueError):
+            Car(name="", position=self.position, direction=self.direction, commands="F")

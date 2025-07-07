@@ -57,15 +57,41 @@ class TestField:
         except ValueError as e:
             assert str(e) == "A car with this name already exists."
 
-    def test_field_is_crash_at_position(self):
-        """Test if the field detects a crash at a position"""
+    def test_field_is_car_at_position(self):
+        """Test if the field detects a car at a position"""
         position = Position(5, 5)
-        assert not self.field.is_crash_at_position(position)
+        found, cars = self.field.is_car_at_position(position)
+        assert not found
+        assert cars == []
 
         # Add a car at the position
         car = Car(name="TestCar", position=position, direction=Direction.NORTH, commands="")
-        car.set_collision_true()
         self.field.add_car(car)
+        found, cars = self.field.is_car_at_position(position)
+        assert found
+        assert car in cars
 
-        assert self.field.is_crash_at_position(position)
+    def test_field_invalid_dimensions(self):
+        """Test field initialization with invalid dimensions"""
+        from pytest import raises
+        with raises(ValueError):
+            Field(0, 10)
+        with raises(ValueError):
+            Field(10, 0)
+        with raises(ValueError):
+            Field(-1, 5)
 
+    def test_is_valid_position(self):
+        """Test is_valid_position method"""
+        assert self.field.is_valid_position(Position(0, 0))
+        assert self.field.is_valid_position(Position(9, 9))
+        assert not self.field.is_valid_position(Position(-1, 0))
+        assert not self.field.is_valid_position(Position(0, -1))
+        assert not self.field.is_valid_position(Position(10, 10))
+
+    def test_get_cars_list(self):
+        """Test get_cars_list method"""
+        assert self.field.get_cars_list() == []
+        car = Car(name="TestCar", position=Position(1, 1), direction=Direction.NORTH, commands="")
+        self.field.add_car(car)
+        assert car in self.field.get_cars_list()
