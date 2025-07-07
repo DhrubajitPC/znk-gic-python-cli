@@ -5,6 +5,7 @@ from src.car import Position, Direction, Car
 from src.field import Field
 from enum import Enum
 
+from src.simulation import Simulation
 
 init_options = ["Add a car to field", "Run simulation"]
 end_options = ["Start over", "Exit"]
@@ -31,9 +32,7 @@ class Cli:
                 self._print_status()
                 self._show_menu(init_options)
             elif self.state == States.RUN:
-                # self._simulate()
-                print('running simulation...')
-                self.state = States.END
+                self._simulate()
             elif self.state == States.END:
                 self._print_simulation_result()
 
@@ -68,7 +67,6 @@ class Cli:
             print(f"- {car.name}, ({car.get_position().x}, {car.get_position().y}) {car.direction}\n")
 
         self._show_menu(end_options)
-
 
 
     def _show_menu(self, options: List[str]):
@@ -158,3 +156,8 @@ class Cli:
                     command = None
                     continue
         return command
+
+    def _simulate(self):
+        simulation = Simulation(self.field)
+        simulation.run()
+        self.state = States.END
