@@ -64,7 +64,3 @@
   - Make it easy to add new commands or car behaviors via plugins or configuration.
 - **Visualization:**
   - Add a simple graphical or web-based visualization of the field and cars.
-
----
-
-Feel free to contribute or suggest more improvements!
