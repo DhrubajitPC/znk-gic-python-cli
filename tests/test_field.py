@@ -64,7 +64,7 @@ class TestField:
 
         # Add a car at the position
         car = Car(name="TestCar", position=position, direction=Direction.NORTH, commands="")
-        car.set_collision()
+        car.set_collision_true()
         self.field.add_car(car)
 
         assert self.field.is_crash_at_position(position)

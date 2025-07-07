@@ -69,5 +69,5 @@ class TestCar:
 
     def test_car_set_collision(self):
         """Test car collision state"""
-        self.car.set_collision()
+        self.car.set_collision_true()
         assert self.car.is_collided

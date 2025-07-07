@@ -24,11 +24,15 @@ class Field:
                 raise ValueError("A car with this name already exists.")
         self.cars.append(car)
 
-    def is_car_at_position(self, position: Position) -> (bool, Car):
+    def is_car_at_position(self, position: Position) -> (bool, List[Car]):
+        cars = []
         for car in self.cars:
             if car.position.x == position.x and car.position.y == position.y:
-                return True, car
-        return False, None
+                cars.append(car)
+        if len(cars) == 0:
+            return False, []
+        else:
+            return True, cars
 
     def get_cars_list(self) -> List[Car]:
         return self.cars

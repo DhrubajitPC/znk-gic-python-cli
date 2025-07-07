@@ -12,7 +12,6 @@ class SimulationResult:
     final_positions: List[FinalPosition]
     collisions: List[Position]
 
-# FFRFFFLFL
 class Simulation:
     def __init__(self, field: Field):
         self.field = field
@@ -30,13 +29,13 @@ class Simulation:
                     command = car.commands[step]
                     if command == 'F':
                         next_position = self._get_car_next_position(car)
-                        is_car_present, present_car = self.field.is_car_at_position(next_position)
+                        is_car_present, present_cars = self.field.is_car_at_position(next_position)
                         # ignore out of bounds action
                         if not self.field.is_valid_position(next_position):
                             continue
                         if is_car_present:
-                            car.is_collided = True
-                            present_car.is_collided = True
+                            car.set_collision_true()
+                            [present_car.set_collision_true() for present_car in present_cars]
                             collisions.append(next_position)
                     car.move(command)
         final_positions = [FinalPosition(car_name=car.name, position=car.position) for car in self.field.cars]
