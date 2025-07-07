@@ -40,7 +40,7 @@ class Cli:
         print("Your current list of cars are: \n")
         cars = self.field.get_cars_list()
         for car in cars:
-            print(f"- {car.name}, ({car.get_position().x}, {car.get_position().y}) {car.direction}, {",".join(car.commands)}\n")
+           print(f"- {car.name}, ({car.get_position().x}, {car.get_position().y}) {car.direction.value}, {"".join(car.commands)}\n")
 
     def _create_field(self):
         prompt = "Please enter the width and height of the simulation field in x y format:\n"
@@ -64,15 +64,19 @@ class Cli:
         self._print_status()
         print("\nAfter simulation, the result is:\n")
         for car in self.field.cars:
-            print(f"- {car.name}, ({car.get_position().x}, {car.get_position().y}) {car.direction}\n")
+            if car.is_collided:
+                _, collided_cars = self.field.is_car_at_position(car.position)
+                collided_cars = [c for c in collided_cars if c.name != car.name]
+                collided_cars_str = ', '.join([c.name for c in collided_cars])
+                print(f"- {car.name}, collides with {collided_cars_str} at ({car.position.x}, {car.position.y}) at step {car.collision_step}")
+            else:
+                print(f"- {car.name}, ({car.get_position().x}, {car.get_position().y}) {car.direction.value}\n")
 
         self._show_menu(end_options)
 
 
     def _show_menu(self, options: List[str]):
         print(f"Please choose from the following options:\n[1] {options[0]}\n[2] {options[1]}\n")
-        print("state")
-        print(self.state)
         try:
             choice = int(input().strip())
             if choice == 1 and self.state == States.END:

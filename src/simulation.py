@@ -1,26 +1,15 @@
 from src.car import Position, Direction, Car
 from src.field import Field
-from typing import List, TypedDict
-from dataclasses import dataclass
 
-class FinalPosition(TypedDict):
-    car_name: str
-    position: Position
-
-@dataclass
-class SimulationResult:
-    final_positions: List[FinalPosition]
-    collisions: List[Position]
 
 class Simulation:
     def __init__(self, field: Field):
         self.field = field
 
-    def run(self) -> SimulationResult:
+    def run(self):
         if not self.field.cars:
-            return SimulationResult([],[])
+            return
         number_of_steps = max(len(car.commands) for car in self.field.cars)
-        collisions: List[Position] = []
         for step in range(number_of_steps):
             for car in self.field.cars:
                 if car.is_collided:
@@ -34,16 +23,11 @@ class Simulation:
                         if not self.field.is_valid_position(next_position):
                             continue
                         if is_car_present:
-                            car.set_collision_true()
-                            [present_car.set_collision_true() for present_car in present_cars]
-                            collisions.append(next_position)
+                            car.set_collision_true(step)
+                            [present_car.set_collision_true(step) for present_car in present_cars]
                     car.move(command)
-        final_positions = [FinalPosition(car_name=car.name, position=car.position) for car in self.field.cars]
-        return SimulationResult(final_positions, collisions)
 
-
-    @staticmethod
-    def _get_car_next_position(car: Car) -> Position:
+    def _get_car_next_position(self, car: Car) -> Position:
         next_position = Position(car.position.x, car.position.y)
         if car.direction == Direction.NORTH:
             next_position.y += 1

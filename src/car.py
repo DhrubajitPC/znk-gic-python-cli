@@ -6,9 +6,6 @@ class Position:
         self.x = x
         self.y = y
 
-    def __repr__(self):
-        return f"Position(x={self.x}, y={self.y})"
-
 class Direction(Enum):
     NORTH = "N"
     SOUTH = "S"
@@ -24,6 +21,7 @@ class Car:
         self.direction = direction
         self.commands = list(commands)
         self.is_collided = False
+        self.collision_step = None
 
     def turn_left(self):
         if self.direction == Direction.NORTH:
@@ -70,10 +68,6 @@ class Car:
         return self.position
 
 
-    def set_collision_true(self):
+    def set_collision_true(self, step: int):
         self.is_collided = True
-
-    def __str__(self) -> str:
-        """String representation of the car with commands"""
-        commands_str = "".join(self.commands)
-        return f"{self.name}, ({self.position.x},{self.position.y}) {self.direction.value}, {commands_str}"
+        self.collision_step = step
